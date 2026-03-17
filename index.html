@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta property="og:title" content="Invitación Real: Boda Daniel & Eucarys">
+    <meta property="og:description" content="Lady Whistledown tiene un anuncio importante...">
+    <meta property="og:image" content="https://tuweb.com/imagen-previsualizacion.jpg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación Real - Daniel & Eucarys</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=IM+Fell+DW+Pica&family=IM+Fell+Great+Primer+SC&family=Italianno&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #fffef2;
+            --gold: #c6a05d;
+            --ink: #333333;
+            --background-overlay: #e3edf7;
+            --envelope-background-image: url('fondoCarta.jpg'); 
+            --seal-background-image: url('sellosinfondo.png');
+            --transition-slow: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- RESET & BASE --- */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100vh;
+            background-color: var(--background-overlay);
+            overflow-x: hidden;
+            font-family: 'IM Fell DW Pica', serif;
+        }
+
+        /* --- ESCENA 1: EL SOBRE (RESPONSIVO) --- */
+        #envelope-scene {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 100;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition-slow);
+            perspective: 1500px;
+        }
+
+        .envelope {
+            position: relative;
+            width: 90%;
+            max-width: 450px;
+            aspect-ratio: 3 / 2;
+            background: #90ab90 var(--envelope-background-image) center/cover;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transition: transform 0.5s ease;
+        }
+
+        /* Efecto flotante para el sobre */
+        .envelope:not(.open) {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .envelope::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            background: 
+                linear-gradient(to right, rgba(0,0,0,0.05) 50%, transparent 50%),
+                linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.1) 50%);
+            pointer-events: none;
+        }
+
+        .flap {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            clip-path: polygon(0 0, 100% 0, 50% 55%);
+            transform-origin: top;
+            z-index: 3;
+            transition: transform 0.8s ease-in-out;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .seal-button {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: #aa4444 var(--seal-background-image) center/contain no-repeat;
+            border-radius: 50%;
+            z-index: 4;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            animation: pulse 2s infinite;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 20px var(--gold); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .envelope.open .flap { transform: rotateX(180deg); z-index: 1; }
+        .envelope.open .seal-button { opacity: 0; pointer-events: none; }
+        .fade-out { opacity: 0; visibility: hidden; transform: scale(1.1); }
+
+        /* --- ESCENA 2: LA INVITACIÓN --- */
+        #invitation-scene {
+            display: none;
+            opacity: 0;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 15px;
+            box-sizing: border-box;
+            transition: var(--transition-slow);
+        }
+
+        #invitation-scene.visible {
+            display: flex;
+            opacity: 1;
+        }
+
+        .invitation-card {
+            background: var(--parchment) url('fondoPergamino.jpg') center/cover;
+            max-width: 650px;
+            width: 100%;
+            padding: 60px 40px;
+            border: 2px solid var(--gold);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            text-align: center;
+            position: relative;
+            outline: 10px double var(--gold);
+            outline-offset: -15px;
+        }
+
+        /* Animación de entrada para elementos internos */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+
+        .visible .reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- CONTENIDO --- */
+        .central-logo { max-width: 150px; margin: 0 auto 20px; }
+        
+        .header-papers { 
+            font-family: 'Cinzel Decorative', cursive; 
+            font-size: 0.9rem; 
+            letter-spacing: 3px; 
+            color: var(--ink);
+            margin-bottom: 5px;
+        }
+
+        .title { 
+            font-family: 'Italianno', cursive; 
+            font-size: clamp(3rem, 10vw, 4.5rem); 
+            color: var(--gold); 
+            margin: 15px 0;
+        }
+
+        .names { 
+            font-size: clamp(1.8rem, 6vw, 2.8rem);
+            color: var(--ink); 
+            margin: 20px 0; 
+            padding: 15px 0;
+            border-top: 1px solid var(--gold);
+            border-bottom: 1px solid var(--gold);
+        }
+
+        /* Mapa Responsivo Mejorado */
+        .mapa-contenedor {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            margin: 30px 0;
+            border: 1px solid var(--gold);
+            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .mapa-contenedor iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .rsvp-button {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 15px 35px;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            text-decoration: none;
+            font-family: 'Cinzel Decorative', serif;
+            font-weight: bold;
+            transition: all 0.4s;
+            background: transparent;
+        }
+
+        .rsvp-button:hover {
+            background: var(--gold);
+            color: white;
+            letter-spacing: 1px;
+        }
+
+        .closing-note {
+            margin-top: 40px;
+            font-size: 0.9rem;
+            font-style: italic;
+            border-top: 1px dashed var(--gold);
+            padding-top: 20px;
+            line-height: 1.6;
+        }
+
+        .bridgerton-form {
+    max-width: 450px;
+    margin: 0 auto;
+    text-align: left;
+    padding: 20px;
+}
+
+.form-title {
+    font-family: 'Cinzel Decorative', cursive;
+    color: var(--gold);
+    font-size: 2rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    font-family: 'IM Fell DW Pica', serif;
+    color: var(--ink);
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+    border-left: 3px solid var(--gold);
+    padding-left: 10px;
+}
+
+.input-group input, 
+.input-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(198, 160, 93, 0.4); /* Oro suave */
+    background: rgba(255, 255, 255, 0.6);
+    font-family: 'IM Fell DW Pica', serif;
+    font-size: 1rem;
+    color: #444;
+    border-radius: 0; /* Estilo papel, nada de bordes redondeados modernos */
+    transition: all 0.3s ease;
+}
+
+.input-group input:focus, 
+.input-group select:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: white;
+    box-shadow: 0 0 8px rgba(198, 160, 93, 0.2);
+}
+
+.bridgerton-form .rsvp-button {
+    width: 100%;
+    cursor: pointer;
+    font-size: 1rem;
+    background-color: transparent;
+}
+
+/* Animación para el mensaje de éxito */
+#form-status.success {
+    color: #4a7c4a;
+    text-align: center;
+    font-style: italic;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Contenedor para los pétalos */
+#petals-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    display: none; /* Se activa al enviar */
+}
+
+.petal {
+    position: absolute;
+    background-color: #ffc0cb; /* Color rosa suave */
+    border-radius: 150% 0 150% 0;
+    opacity: 0.8;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-10%) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.8; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
+        /* Media Queries para móviles */
+        @media (max-width: 480px) {
+            .invitation-card { padding: 40px 20px; outline-offset: -10px; }
+            .seal-button { width: 60px; height: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="petals-container"></div>
+
+    <div id="envelope-scene">
+        <div class="envelope" id="envelope">
+            <div class="flap"></div>
+            <button class="seal-button" id="sealBtn" aria-label="Abrir invitación"></button>
+        </div>
+    </div>
+
+    <div id="invitation-scene">
+        <div class="invitation-card">
+            <img src="Logolistopequeño.svg" alt="Logo de Boda" class="central-logo reveal" style="transition-delay: 0.2s;">
+
+            <div class="header-papers reveal" style="transition-delay: 0.4s;">Lady Whistledown's Society Papers</div>
+            
+            <div class="edition-text reveal" style="transition-delay: 0.5s; color: var(--gold); text-transform: uppercase; font-size: 0.8rem;">
+                Edición Especial de Boda de la Temporada<br>
+                <small>(SPECIAL WEDDING EDITION OF THE SEASON)</small>
+            </div>
+            
+            <p class="announcement reveal" style="transition-delay: 0.7s; font-style: italic; margin: 20px 0;">
+                Se rumorea en los círculos más distinguidos que el cortejo de<br>
+                <strong>Daniel Oria & Eucarys Mendez</strong><br>
+                finalmente se ha confirmado... ¡y se casan!
+            </p>
+            
+            <div class="title reveal" style="transition-delay: 0.9s;">La Boda de</div>
+            
+            <div class="names reveal" style="transition-delay: 1.1s;">
+                Daniel Oria <br> & <br> Eucarys Mendez
+            </div>
+
+            <div class="details reveal" style="transition-delay: 1.3s;">
+                El Sábado, 22 de Mayo de 2026<br>
+                A las seis de la tarde (6:00 PM)<br>
+                <strong>La Florida, Vicuña Mackenna 6456</strong><br>
+                Santiago, Chile
+            </div>
+
+            <div class="mapa-contenedor reveal" style="transition-delay: 1.5s;">
+                <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3326.313463773179!2d-70.5925349!3d-33.5204618!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9662d0070183b06d%3A0x13c078021f1c7908!2sAv.%20Vicu%C3%B1a%20Mackenna%206456%2C%20La%20Florida%2C%20Regi%C3%B3n%20Metropolitana!5e0!3m2!1ses-419!2scl!4v1700000000000" 
+                    allowfullscreen="" loading="lazy">
+                </iframe>
+            </div>
+<div class="custom-form-container reveal" style="transition-delay: 1.7s; margin-top: 50px;">
+    <h3 class="form-title">R.S.V.P.</h3>
+    <p style="font-style: italic; margin-bottom: 25px; color: var(--ink);">
+        Se solicita el honor de su respuesta para esta gran gala.
+    </p>
+    
+    <form id="bridgerton-form" action="https://formspree.io/f/mgonnqqp" method="POST" class="bridgerton-form">
+        <div class="input-group">
+            <label for="full-name">Nombre Completo</label>
+            <input type="text" id="full-name" name="Nombre" required placeholder="Ej. Lord Anthony Bridgerton">
+        </div>
+
+        <div class="input-group">
+            <label for="attendance">¿Asistirá a la gala?</label>
+            <select id="attendance" name="Asistencia" required>
+                <option value="" disabled selected>Seleccione una opción</option>
+                <option value="Confirmado">Asistiré con gusto</option>
+                <option value="Declinado">Lamento no poder asistir</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="companion">Nombre del Acompañante</label>
+            <input type="text" id="companion" name="Acompañante" placeholder="Si asiste solo, dejar en blanco">
+        </div>
+
+        <button type="submit" class="rsvp-button" id="submit-btn">
+            Enviar a Lady Whistledown
+        </button>
+
+        <p id="form-status" style="margin-top: 20px; font-weight: bold; display: none;"></p>
+    </form>
+</div>
+
+            <div class="closing-note reveal" style="transition-delay: 1.9s;">
+                Prepárense para una velada de romance, elegancia y el mayor escándalo de la temporada.<br><br>
+                Se ruega puntualidad.<br>
+                <strong>Código de Vestimenta: Formal Regency / Etiqueta Rigurosa</strong><br>
+                <span style="display: block; margin-top: 15px; color: var(--gold);">— Atentamente, Lady Whistledown.</span>
+            </div>
+        </div>
+    </div>
+
+   <script>
+    // --- VARIABLES DE ESCENAS ---
+    const sealBtn = document.getElementById('sealBtn');
+    const envelope = document.getElementById('envelope');
+    const envelopeScene = document.getElementById('envelope-scene');
+    const invitationScene = document.getElementById('invitation-scene');
+
+    // --- VARIABLES DE FORMULARIO Y EFECTOS ---
+    const form = document.getElementById("bridgerton-form");
+    const status = document.getElementById("form-status");
+    const petalsContainer = document.getElementById("petals-container");
+
+    // 1. LÓGICA DE APERTURA DEL SOBRE
+    sealBtn.addEventListener('click', () => {
+        // Abrir sobre
+        envelope.classList.add('open');
+        
+        // Desvanecer escena del sobre
+        setTimeout(() => {
+            envelopeScene.classList.add('fade-out');
+            
+            // Cambiar a escena de invitación
+            setTimeout(() => {
+                envelopeScene.style.display = 'none';
+                invitationScene.style.display = 'flex';
+                
+                // Mostrar invitación con animaciones
+                setTimeout(() => {
+                    invitationScene.classList.add('visible');
+                }, 100);
+            }, 1000);
+        }, 800);
+    });
+
+    // 2. FUNCIÓN PARA CREAR PÉTALOS CAYENDO
+    function createPetals() {
+        if (!petalsContainer) return;
+        petalsContainer.style.display = "block";
+        
+        for (let i = 0; i < 35; i++) {
+            const petal = document.createElement("div");
+            petal.className = "petal";
+            
+            // Posiciones y tamaños aleatorios
+            petal.style.left = Math.random() * 100 + "vw";
+            const size = Math.random() * 15 + 10 + "px";
+            petal.style.width = size;
+            petal.style.height = size;
+            
+            // Tiempos de caída aleatorios para naturalidad
+            petal.style.animationDuration = Math.random() * 3 + 3 + "s";
+            petal.style.animationDelay = Math.random() * 2 + "s";
+            
+            petalsContainer.appendChild(petal);
+        }
+    }
+
+    // 3. LÓGICA DE ENVÍO FORMSPREE + WHATSAPP
+    form.addEventListener("submit", async function(event) {
+        event.preventDefault(); // Evita recarga de página
+        
+        const data = new FormData(event.target);
+        const btn = document.getElementById("submit-btn");
+        
+        // Extraer datos para el mensaje de WhatsApp
+        const nombreInvitado = data.get("Nombre");
+        const estadoAsistencia = data.get("Asistencia");
+        
+        btn.innerText = "Enviando mensajero real...";
+        btn.disabled = true;
+
+        fetch(event.target.action, {
+            method: form.method,
+            body: data,
+            headers: { 'Accept': 'application/json' }
+        }).then(response => {
+            if (response.ok) {
+                // ÉXITO
+                status.innerHTML = "¡Su respuesta ha sido entregada a Lady Whistledown con éxito!";
+                status.classList.add("success");
+                status.style.display = "block";
+                btn.style.display = "none";
+                
+                // Lanzar pétalos
+                createPetals();
+
+                // Redirección a WhatsApp después de 3.5 segundos
+                setTimeout(() => {
+                    // --- CONFIGURA TU NÚMERO AQUÍ (Sin el +) ---
+                    const telefono = "56962946102"; 
+                    
+                    const mensajeBase = `¡Saludos! Soy ${nombreInvitado}. He recibido la invitación de Lady Whistledown y acabo de confirmar mi ${estadoAsistencia} para la boda de Daniel y Eucarys. ¡Espero con ansias la velada de la temporada!`;
+                    
+                    const urlWhatsapp = `https://wa.me/${telefono}?text=${encodeURIComponent(mensajeBase)}`;
+                    
+                    window.location.href = urlWhatsapp;
+                }, 3500);
+
+            } else {
+                // ERROR DE RESPUESTA
+                response.json().then(data => {
+                    if (Object.hasOwn(data, 'errors')) {
+                        status.innerHTML = data["errors"].map(error => error["message"]).join(", ");
+                    } else {
+                        status.innerHTML = "Hubo un problema al entregar su misiva.";
+                    }
+                    status.style.display = "block";
+                    btn.disabled = false;
+                    btn.innerText = "Reintentar Envío";
+                });
+            }
+        }).catch(error => {
+            // ERROR DE CONEXIÓN
+            status.innerHTML = "Error de conexión. El mensajero no pudo llegar.";
+            status.style.display = "block";
+            btn.disabled = false;
+            btn.innerText = "Reintentar Envío";
+        });
+    });
+</script>
+
+    </script>
+
+    
+</body>
+</html>
