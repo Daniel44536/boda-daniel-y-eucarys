@@ -49,15 +49,37 @@
             perspective: 1500px;
         }
 
-        .envelope {
-            position: relative;
-            width: 90%;
-            max-width: 450px;
-            aspect-ratio: 3 / 2;
-            background: #90ab90 var(--envelope-background-image) center/cover;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            transition: transform 0.5s ease;
-        }
+.envelope {
+    position: relative;
+    width: 90%;
+    max-width: 450px;
+    aspect-ratio: 3 / 2;
+    background: #90ab90 var(--envelope-background-image) center/cover;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    transition: transform 0.5s ease;
+    
+    /* --- NUEVO: Simulación de pliegues --- */
+    background-image: 
+        /* Pliegue diagonal Superior Izquierda */
+        linear-gradient(to top right, transparent 50%, rgba(0,0,0,0.08) 50.5%, transparent 51%),
+        /* Pliegue diagonal Superior Derecha */
+        linear-gradient(to top left, transparent 50%, rgba(0,0,0,0.08) 50.5%, transparent 51%),
+        /* Pliegue Inferior y costuras laterales sutiles */
+        linear-gradient(to right, transparent 20px, rgba(0,0,0,0.03) 20px, rgba(0,0,0,0.03) 21px, transparent 21px, transparent calc(100% - 21px), rgba(0,0,0,0.03) calc(100% - 21px), rgba(0,0,0,0.03) calc(100% - 20px), transparent calc(100% - 20px)),
+        /* Degradado de sombreado de fondo para dar volumen */
+        radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, transparent 80%),
+        /* Tu imagen de fondo original */
+        var(--envelope-background-image);
+    background-size: cover, cover, cover, cover, cover;
+}
+
+.envelope.no-folds {
+    background-image: var(--envelope-background-image);
+}
+
+.envelope {
+    transition: background-image 0.5s ease, transform 0.5s ease;
+}
 
         /* Efecto flotante para el sobre */
         .envelope:not(.open) {
@@ -119,56 +141,6 @@
         .envelope.open .flap { transform: rotateX(180deg); z-index: 1; }
         .envelope.open .seal-button { opacity: 0; pointer-events: none; }
         .fade-out { opacity: 0; visibility: hidden; transform: scale(1.1); }
-
-        :root {
-    /* ... tus otras variables ... */
-    --letter-bg-image: url('fondoPergamino2'); /* CAMBIA EL FONDO DE LA HOJA AQUÍ */
-}
-
-.letter-paper {
-    position: absolute;
-    bottom: 10%;
-    left: 5%;
-    width: 90%;
-    height: 80%;
-    background: var(--parchment) var(--letter-bg-image) center/cover;
-    z-index: 2; /* Por encima del fondo del sobre, debajo de la solapa cerrada */
-    /* --- CAMBIOS AQUÍ --- */
-    opacity: 0; /* LA HACE INVISIBLE INICIALMENTE */
-    
-    /* Actualizamos la transición para incluir 'opacity' y hacerla suave */
-    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1), 
-                opacity 0.5s ease-in-out; /* Se vuelve visible rápido, sube lento */
-    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-/* Imagen dentro de la hoja */
-.letter-image {
-    max-width: 80%;
-    max-height: 80%;
-    opacity: 0.8;
-    filter: sepia(0.3); /* Toque antiguo */
-}
-
-/* Animación: Cuando el sobre tiene la clase .open, la carta aparece y sube */
-.envelope.open .letter-paper {
-    opacity: 1; /* SE VUELVE VISIBLE */
-    transform: translateY(-50%) scale(1.05); /* Sigue subiendo */
-    
-    /* Opcional: Pequeño retraso para que la solapa se abra un poco primero */
-    transition-delay: 0.3s; /* La carta espera 0.3s antes de empezar a subir y aparecer */
-}
-
-/* Asegurar que la solapa no tape la carta al abrirse */
-.envelope.open .flap {
-    z-index: 1;
-}
 
         /* --- ESCENA 2: LA INVITACIÓN --- */
         #invitation-scene {
@@ -404,7 +376,7 @@
 .post-submit-image {
 
     width: 100%;
-    max-width: 150px;
+    max-width: 300px;
     margin: 20px auto;
 
     /* ESTO ES LO QUE CENTRA LA IMAGEN */
@@ -414,36 +386,110 @@
 
     animation: fadeIn 1.5s ease;
 }
+
+/* --- NUEVOS ESTILOS PARA LA CARTA INTERNA --- */
+
+.envelope {
+    overflow: visible; /* Permitir que la carta salga hacia arriba */
+}
+
+/* El "bolsillo" del sobre que tapa la carta al inicio */
+.envelope-front {
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    /* Cambiamos el 35% por un 15% para que sea más alto */
+    clip-path: polygon(0 15%, 100% 15%, 100% 100%, 0 100%); 
+    z-index: 3; /* El frente siempre debe tapar a la carta al inicio */
+}
+
+.letter {
+    position: absolute;
+    /* Bajamos la carta para que se esconda tras el bolsillo */
+    bottom: 0; 
+    left: 5%;
+    width: 90%;
+    height: 80%; /* Reducimos un poco el alto para que quepa bien */
+    background-image: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)), url('fondoPergamino.jpg');
+    background-size: cover;
+    z-index: 1; /* ¡IMPORTANTE! Debe estar detrás del frente (que es 3) */
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 15px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.letter-content {
+    text-align: center;
+    border: 1px solid var(--gold);
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.inner-letter-img {
+    width: 60px; /* Tamaño de la imagen dentro de la carta */
+    margin-bottom: 10px;
+}
+
+.letter p {
+    font-family: 'Italianno', cursive;
+    font-size: 1.5rem;
+    margin: 5px 0;
+    color: var(--ink);
+}
+
+/* Animación de salida */
+.envelope.open .letter {
+    transform: translateY(-105%); /* Saca la carta por completo */
+}
+
+/* Ajuste del botón para que esté sobre todo */
+.seal-button {
+    z-index: 10;
+}
     </style>
 </head>
 <body>
 
     <div id="petals-container"></div>
 
-    <div id="envelope-scene">
-        <div class="envelope" id="envelope">
-            <div class="flap"></div>
-            <div class="letter-paper" id="letterPaper">
-        <img src="logoLady.png" alt="Sello Real" class="letter-image">
-    </div>
-            <button class="seal-button" id="sealBtn" aria-label="Abrir invitación"></button>
+<div id="envelope-scene">
+    <div class="envelope" id="envelope">
+        <div class="flap"></div>
+        
+        <div class="letter" id="preview-letter">
+            <div class="letter-content">
+                <img src="logoLady.png" class="inner-letter-img" alt="Sello Real">
+                <p>Espero que te guste...</p>
+                <p><strong>Eucarys & Daniel</strong></p>
+            </div>
         </div>
+
+        <div class="envelope-front"></div>
+        
+        <button class="seal-button" id="sealBtn" aria-label="Abrir invitación"></button>
     </div>
+</div>
 
     <div id="invitation-scene">
         <div class="invitation-card">
             <img src="Logolistopequeño.svg" alt="Logo de Boda" class="central-logo reveal" style="transition-delay: 0.2s;">
 
-            <div class="header-papers reveal" style="transition-delay: 0.4s;">Lady Whistledown's <br> Society Papers</div>
+            <div class="header-papers reveal" style="transition-delay: 0.4s;">Lady Whistledown's Society Papers</div>
             
             <div class="edition-text reveal" style="transition-delay: 0.5s; color: var(--gold); text-transform: uppercase; font-size: 0.8rem;">
                 Edición Especial de Boda de la Temporada<br>
-                <small>(SPECIAL WEDDING EDITION OF THE SEASON)</small>
             </div>
             
             <p class="announcement reveal" style="transition-delay: 0.7s; font-style: italic; margin: 20px 0;">
                 Se rumorea en los círculos más distinguidos que el cortejo de<br>
-                <strong>Eucarys Mendez & Daniel Oria</strong><br>
+                <strong>Eucarys Méndez & Daniel Oria</strong><br>
                 finalmente se ha confirmado... ¡y se casan!
             </p>
             
@@ -463,26 +509,27 @@
             <div class="love-story reveal" style="transition-delay: 1.4s;">
     <div class="story-caption">Una Unión Inevitable</div>
     <p>
-Mis queridos y curiosos lectores, <br>
+Mis queridos y curiosos lectores,
 
-Parece que ni el tiempo, ni la distancia, ni los giros del destino han sido capaces de separar lo que claramente estaba escrito con tinta indeleble: la historia de <strong> la señoritaEucarys Méndez y el caballero Daniel Oria.</strong><br>
+Parece que ni el tiempo, ni la distancia, ni los giros del destino han sido capaces de separar lo que claramente estaba escrito con tinta indeleble: la historia de la señorita <strong> Méndez </strong> y el caballero <strong> Oria.</strong> 
 
 Todo comenzó —como suelen hacerlo los romances más peligrosamente encantadores— en la juventud, cuando apenas contaban con dieciocho años y compartían más que aulas en la Escuela de Administración… compartían miradas que prometían más de lo que ambos estaban dispuestos a admitir.
 
-Tras un año de prudente amistad, el inevitable ocurrió: el corazón habló. Pero no todo sería idilio. Dos años más tarde, el destino decidió ponerlos a prueba con una separación digna de los dramas más comentados. Él partió hacia Chile; ella, contra todo pronóstico, decidió esperar. Ocho meses que, para muchos, habrían sido el final… pero para ellos fueron solo el comienzo.
+Tras un año de prudente amistad, el inevitable ocurrió: el corazón habló. Pero no todo sería idilio. Tres años más tarde, el destino decidió ponerlos a prueba con una separación digna de los dramas más comentados. Él partió hacia Chile; ella, contra todo pronóstico, decidió esperar. Ocho meses que, para muchos, habrían sido el final… pero para ellos fueron solo el comienzo.
 
-Y vaya comienzo: ocho años de vida juntos, de complicidad, de desafíos compartidos y de una historia que, lejos de apagarse, ardió con más fuerza.
+Y vaya comienzo: diez años de vida juntos, de complicidad, de desafíos compartidos y de una historia que, lejos de apagarse, ardió con más fuerza.
 
-Ahora, finalmente, este relato alcanza su capítulo más esperado. <br>
+Ahora, finalmente, este relato alcanza su capítulo más esperado.
 
 El 22 de mayo de 2026, estos dos protagonistas sellarán su historia con un “sí, acepto” que, francamente, ya todos veíamos venir.
 
 Prepárense, queridos lectores… porque esta boda promete ser tan inolvidable como el romance que la precede.
 
 Atentamente,
-Quien siempre sabe más de lo que dice. 
+Quien siempre sabe más de lo que dice.  |
     </p>
 </div>
+
 <div class="mapa-contenedor reveal" style="transition-delay: 1.5s;">
     <iframe
         src="https://maps.google.com/maps?q=Casa+Carmela,El+Colorado,Colina,Santiago&t=k&z=16&output=embed" 
@@ -524,7 +571,7 @@ Quien siempre sabe más de lo que dice.
             Enviar a Lady Whistledown
         </button>
 
-
+        <img src="logoLady.png" id="celebration-image" class="post-submit-image" alt="Celebración">
 
         <p id="form-status" style="margin-top: 20px; font-weight: bold; display: none;"></p>
     </form>
@@ -536,7 +583,6 @@ Quien siempre sabe más de lo que dice.
                 <strong>Código de Vestimenta: Formal Regency / Etiqueta Rigurosa</strong><br>
                 <span style="display: block; margin-top: 15px;">— Atentamente, Lady Whistledown.</span>
             </div>
-                    <img src="logoLady.png" id="celebration-image" class="post-submit-image" alt="Celebración">
         </div>
     </div>
 
@@ -555,26 +601,59 @@ Quien siempre sabe más de lo que dice.
     
 
     // 1. LÓGICA DE APERTURA DEL SOBRE
-    sealBtn.addEventListener('click', () => {
-        // Abrir sobre
-        envelope.classList.add('open');
+
+    
+// Busca tu Event Listener del sealBtn y reemplázalo por este:
+sealBtn.addEventListener('click', () => {
+    // 1. Abrir solapa
+    envelope.classList.add('open');
+
+    // Añadimos este pequeño cambio de z-index a la mitad de la animación
+    setTimeout(() => {
+        document.getElementById('preview-letter').style.zIndex = "20";
+    }, 600); // Se activa mientras la carta va subiendo
+    
+    // 2. Esperar a que la carta suba (1.2s del CSS + un pequeño margen)
+    setTimeout(() => {
+        // 3. Desvanecer escena del sobre
+        envelopeScene.classList.add('fade-out');
         
-        // Desvanecer escena del sobre
         setTimeout(() => {
-            envelopeScene.classList.add('fade-out');
+            envelopeScene.style.display = 'none';
+            invitationScene.style.display = 'flex';
             
-            // Cambiar a escena de invitación
+            // 4. Mostrar invitación final
             setTimeout(() => {
-                envelopeScene.style.display = 'none';
-                invitationScene.style.display = 'flex';
-                
-                // Mostrar invitación con animaciones
-                setTimeout(() => {
-                    invitationScene.classList.add('visible');
-                }, 100);
-            }, 1000);
-        }, 800);
-    });
+                invitationScene.classList.add('visible');
+            }, 100);
+        }, 1000);
+    }, 1800); // Retraso total para ver la carta saliendo
+});
+
+sealBtn.addEventListener('click', () => {
+    // Quitar pliegues
+    envelope.classList.add('no-folds');
+
+    // 1. Abrir solapa
+    envelope.classList.add('open');
+
+    setTimeout(() => {
+        document.getElementById('preview-letter').style.zIndex = "20";
+    }, 600);
+
+    setTimeout(() => {
+        envelopeScene.classList.add('fade-out');
+        
+        setTimeout(() => {
+            envelopeScene.style.display = 'none';
+            invitationScene.style.display = 'flex';
+            
+            setTimeout(() => {
+                invitationScene.classList.add('visible');
+            }, 100);
+        }, 1000);
+    }, 1800);
+});
 
     // 2. FUNCIÓN PARA CREAR PÉTALOS CAYENDO
     function createPetals() {
