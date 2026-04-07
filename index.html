@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -171,7 +171,7 @@
         }
 
         .invitation-card {
-            background: var(--parchment) url('fondoPergamino.jpg') center/cover;
+            background: var(--parchment) url('pergaminolargo.png') center/cover;
             max-width: 650px;
             width: 100%;
             padding: 60px 40px;
@@ -182,6 +182,20 @@
             outline: 10px double var(--gold);
             outline-offset: -15px;
         }
+
+        
+            .invitation-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.2); /* 👈 controla transparencia */
+            z-index: 0;
+        }
+
+            .invitation-card * {
+            position: relative;
+            z-index: 1;
+}
 
         /* Animación de entrada para elementos internos */
         .reveal {
@@ -519,7 +533,7 @@ Parece que ni el tiempo, ni la distancia, ni los giros del destino han sido capa
 
 Todo comenzó —como suelen hacerlo los romances más peligrosamente encantadores— en la juventud, cuando apenas contaban con dieciocho años y compartían más que aulas en la Escuela de Administración… compartían miradas que prometían más de lo que ambos estaban dispuestos a admitir.
 
-Tras un año de prudente amistad, el inevitable ocurrió: el corazón habló. Pero no todo sería idilio. Tres años más tarde, el destino decidió ponerlos a prueba con una separación digna de los dramas más comentados. Él partió hacia Chile; ella, contra todo pronóstico, decidió esperar. Ocho meses que, para muchos, habrían sido el final… pero para ellos fueron solo el comienzo.
+Tras un año de prudente amistad, el inevitable ocurrió: el corazón habló. Pero no todo sería idilio. Tres años más tarde, el destino decidió ponerlos a prueba con una separación digna de los dramas más comentados. Él partió hacia Chile; ella, contra todo pronóstico, decidió esperar. Ocho meses que, para muchos, habrían sido el final… pero para ellos fueron solo el comienzo.  <br>
 
 Y vaya comienzo: casi diez años de vida juntos, de complicidad, de desafíos compartidos y de una historia que, lejos de apagarse, ardió con más fuerza.
 
