@@ -506,6 +506,66 @@
 .live-buttons a img:hover {
     transform: scale(1.2);
 }
+
+.gift-section {
+    margin-top: 40px;
+    padding: 30px 25px;
+    border-top: 1px solid rgba(0,0,0,0.2);
+    font-family: 'Georgia', serif;
+    color: #000;
+}
+
+.gift-text {
+    font-size: 1.1em;
+    line-height: 1.7;
+    text-align: center;
+    font-style: italic;
+}
+
+.bank-section {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.toggle-btn {
+    padding: 10px 20px;
+    border: 2px solid #c9a646;
+    background: transparent;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.toggle-btn:hover {
+    background: #c9a646;
+    color: white;
+}
+
+.bank-details {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid rgba(0,0,0,0.2);
+    display: none;
+    font-family: monospace;
+    white-space: pre-line;
+    background: rgba(255,255,255,0.6);
+    border-radius: 10px;
+}
+
+.copy-btn {
+    margin-top: 15px;
+    padding: 8px 15px;
+    border: none;
+    background: #c9a646;
+    color: white;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.copy-btn:hover {
+    opacity: 0.8;
+}
     </style>
 </head>
 <body>
@@ -590,10 +650,39 @@ quien siempre sabe más de lo que dice, Lady Whistledown.
 
              <div class="details reveal" style="transition-delay: 1.3s;">
                 El Sábado, 23 de Mayo de 2026<br>
-                A las tres de la tarde (3:00 PM)<br>
+                A las dos de la tarde (2:00 PM)<br>
                 <strong>Colina, El Colorado, Casa Carmela</strong><br>
                 Santiago, Chile
             </div>
+
+<div class="gift-section">
+    <p class="gift-text">
+        Para nosotros, el mayor tesoro sería contar con vuestra cálida presencia, 
+        su amistad nos enaltece.<br><br>
+        
+        En caso de que quisieran halagarnos con un obsequio, recibiríamos con sumo agrado 
+        su aporte económico directamente a las arcas de nuestro modesto palacio.
+    </p>
+</div>
+
+<div class="bank-section">
+    <button class="toggle-btn" onclick="toggleBank()">
+        💰 Ver datos bancarios
+    </button>
+
+    <div class="bank-details" id="bankData">
+Daniel Jose Oria
+RUT: 26437023K
+Correo: DANIELORIA435@GMAIL.COM
+Banco: Banco Falabella
+Tipo de cuenta: Cuenta Corriente
+N°: 1-550-002269-8
+    </div>
+
+    <button class="copy-btn" onclick="copyBank()">
+        Copiar datos
+    </button>
+</div>
 
 <div class="live-section">
     <div class="live-title">📡 Ver ceremonia en vivo</div>
@@ -809,6 +898,18 @@ sealBtn.addEventListener('click', () => {
             btn.innerText = "Reintentar Envío";
         });
     });
+
+function toggleBank() {
+    const el = document.getElementById("bankData");
+    el.style.display = (el.style.display === "block") ? "none" : "block";
+}
+
+function copyBank() {
+    const text = document.getElementById("bankData").innerText;
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Datos copiados ✅");
+    });
+}
 </script>
 
     </script>
